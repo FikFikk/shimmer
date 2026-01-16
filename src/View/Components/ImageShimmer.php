@@ -3,27 +3,28 @@
 namespace Fikfikk\Shimmer\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\View\View;
 
 class ImageShimmer extends Component
 {
-    public $src;
-    public $alt;
-    public $class;
-    public $width;
-    public $height;
-    public $aspectRatio;
-    public $loading;
-    public $decoding;
+    public string $src;
+    public string $alt;
+    public string $class;
+    public ?string $width;
+    public ?string $height;
+    public string $aspectRatio;
+    public string $loading;
+    public string $decoding;
 
     public function __construct(
-        $src,
-        $alt = '',
-        $class = '',
-        $width = null,
-        $height = null,
-        $aspectRatio = null,
-        $loading = 'lazy',
-        $decoding = 'async'
+        string $src,
+        string $alt = '',
+        string $class = '',
+        ?string $width = null,
+        ?string $height = null,
+        ?string $aspectRatio = null,
+        string $loading = 'lazy',
+        string $decoding = 'async'
     ) {
         $this->src = $src;
         $this->alt = $alt;
@@ -35,9 +36,20 @@ class ImageShimmer extends Component
         $this->decoding = $decoding;
     }
 
-    public function render()
+    /**
+     * Get the view / contents that represent the component.
+     */
+    public function render(): View
     {
-        return view('shimmer::components.image-shimmer', [
+        return view('shimmer::components.image-shimmer');
+    }
+
+    /**
+     * Get data for the view.
+     */
+    public function data(): array
+    {
+        return [
             'src' => $this->src,
             'alt' => $this->alt,
             'class' => $this->class,
@@ -46,6 +58,6 @@ class ImageShimmer extends Component
             'aspectRatio' => $this->aspectRatio,
             'loading' => $this->loading,
             'decoding' => $this->decoding,
-        ]);
+        ];
     }
 }
