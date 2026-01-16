@@ -1,0 +1,47 @@
+{
+    "name": "fikfikk/shimmer",
+    "description": "Laravel package for beautiful image shimmer loading effect",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "shimmer",
+        "loading",
+        "image",
+        "skeleton"
+    ],
+    "authors": [
+        {
+            "name": "FikFikk",
+            "email": "fikfikk14@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0|^8.1|^8.2|^8.3",
+        "illuminate/support": "^9.0|^10.0|^11.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0|^8.0|^9.0",
+        "phpunit/phpunit": "^9.5|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fikfikk\\Shimmer\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Fikfikk\\Shimmer\\ShimmerServiceProvider"
+            ],
+            "aliases": {
+                "Shimmer": "Fikfikk\\Shimmer\\Facades\\Shimmer"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

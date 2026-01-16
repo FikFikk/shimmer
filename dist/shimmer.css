@@ -1,0 +1,93 @@
+/* Fikfikk Shimmer - Laravel Image Shimmer Package */
+
+:root {
+    --shimmer-base: #e0e0e0;
+    --shimmer-color: #f0f0f0;
+    --shimmer-duration: 1.5s;
+    --shimmer-radius: 8px;
+    --shimmer-fade: 0.3s;
+}
+
+.shimmer-container,
+.shimmer-image-container {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--shimmer-base, #e0e0e0);
+    border-radius: var(--shimmer-radius, 8px);
+    width: 100%;
+}
+
+.shimmer-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--shimmer-base, #e0e0e0);
+    overflow: hidden;
+}
+
+.shimmer-animation {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--shimmer-color, #f0f0f0) 50%,
+            transparent 100%);
+    animation: shimmer var(--shimmer-duration, 1.5s) infinite;
+}
+
+.shimmer-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity var(--shimmer-fade, 0.3s) ease-in-out;
+}
+
+.shimmer-image.loaded {
+    opacity: 1 !important;
+}
+
+.shimmer-placeholder.hidden {
+    display: none;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --shimmer-base: #1a1a1a;
+        --shimmer-color: #2a2a2a;
+    }
+}
+
+/* Utility classes */
+.shimmer-rounded {
+    --shimmer-radius: 50%;
+}
+
+.shimmer-rounded-lg {
+    --shimmer-radius: 16px;
+}
+
+.shimmer-rounded-none {
+    --shimmer-radius: 0;
+}
+
+.shimmer-fast {
+    --shimmer-duration: 0.8s;
+}
+
+.shimmer-slow {
+    --shimmer-duration: 2.5s;
+}

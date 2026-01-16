@@ -1,0 +1,56 @@
+/* Fikfikk Shimmer - Laravel Image Shimmer Package */
+.shimmer-container,
+.shimmer-image-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #e0e0e0;
+    background-color: var(--shimmer-base, #e0e0e0);
+    border-radius: 8px;
+    width: 100%
+}
+
+.shimmer-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #e0e0e0;
+    background-color: var(--shimmer-base, #e0e0e0);
+    overflow: hidden
+}
+
+.shimmer-animation {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, #f0f0f0 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--shimmer-color, #f0f0f0) 50%, transparent 100%);
+    animation: shimmer 1.5s infinite
+}
+
+.shimmer-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity .3s ease-in-out;
+    opacity: 0
+}
+
+.shimmer-image.loaded {
+    opacity: 1 !important
+}
+
+.shimmer-placeholder.hidden {
+    display: none
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%)
+    }
+
+    100% {
+        transform: translateX(100%)
+    }
+}
