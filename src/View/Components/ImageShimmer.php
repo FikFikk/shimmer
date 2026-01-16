@@ -37,6 +37,15 @@ class ImageShimmer extends Component
 
     public function render()
     {
-        return view('shimmer::components.image-shimmer');
+        return view('shimmer::components.image-shimmer', [
+            'src' => $this->src,
+            'alt' => $this->alt,
+            'class' => $this->class,
+            'width' => $this->width,
+            'height' => $this->height,
+            'aspectRatio' => $this->aspectRatio,
+            'loading' => $this->loading,
+            'decoding' => $this->decoding,
+        ]);
     }
 }
