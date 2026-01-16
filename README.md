@@ -28,8 +28,14 @@ composer require fikfikk/shimmer
 ### CDN (HTML/JS/Vue/React)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fikfikk-shimmer@latest/dist/shimmer.min.css">
-<script src="https://cdn.jsdelivr.net/npm/fikfikk-shimmer@latest/dist/shimmer.min.js" defer></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/fikfikk-shimmer@latest/dist/shimmer.min.css"
+/>
+<script
+  src="https://cdn.jsdelivr.net/npm/fikfikk-shimmer@latest/dist/shimmer.min.js"
+  defer
+></script>
 ```
 
 ### NPM (Coming Soon)
@@ -49,15 +55,15 @@ npm install fikfikk-shimmer
 <x-shimmer::image-shimmer src="{{ asset('photo.jpg') }}" alt="Photo" />
 
 {{-- With aspect ratio --}}
-<x-shimmer::image-shimmer 
-    src="{{ $product->image }}" 
+<x-shimmer::image-shimmer
+    src="{{ $product->image }}"
     alt="{{ $product->name }}"
     aspect-ratio="4/3"
 />
 
 {{-- With fixed dimensions --}}
-<x-shimmer::image-shimmer 
-    src="{{ $user->avatar }}" 
+<x-shimmer::image-shimmer
+    src="{{ $user->avatar }}"
     alt="{{ $user->name }}"
     width="100"
     height="100"
@@ -69,10 +75,10 @@ npm install fikfikk-shimmer
 
 ```html
 <div class="shimmer-container" style="aspect-ratio: 16/9;">
-    <div class="shimmer-placeholder">
-        <div class="shimmer-animation"></div>
-    </div>
-    <img src="photo.jpg" alt="Photo" class="shimmer-image" data-shimmer-image>
+  <div class="shimmer-placeholder">
+    <div class="shimmer-animation"></div>
+  </div>
+  <img src="photo.jpg" alt="Photo" class="shimmer-image" data-shimmer-image />
 </div>
 ```
 
@@ -81,11 +87,11 @@ npm install fikfikk-shimmer
 ```javascript
 // Create shimmer programmatically
 FikfikkShimmer.create({
-    container: '#my-container',
-    src: 'photo.jpg',
-    alt: 'My Photo',
-    aspectRatio: '16/9',
-    onLoad: (img) => console.log('Loaded!', img)
+  container: "#my-container",
+  src: "photo.jpg",
+  alt: "My Photo",
+  aspectRatio: "16/9",
+  onLoad: (img) => console.log("Loaded!", img),
 });
 
 // Refresh after dynamic content
@@ -96,34 +102,34 @@ FikfikkShimmer.refresh();
 
 ```vue
 <template>
-    <ShimmerImage 
-        :src="product.image" 
-        :alt="product.name"
-        aspect-ratio="1/1"
-        @load="onImageLoad"
-    />
+  <ShimmerImage
+    :src="product.image"
+    :alt="product.name"
+    aspect-ratio="1/1"
+    @load="onImageLoad"
+  />
 </template>
 
 <script setup>
-import { ShimmerImage } from 'fikfikk-shimmer/vue';
+import { ShimmerImage } from "fikfikk-shimmer/vue";
 </script>
 ```
 
 ### React
 
 ```jsx
-import { ShimmerImage } from 'fikfikk-shimmer/react';
+import { ShimmerImage } from "fikfikk-shimmer/react";
 
 function ProductCard({ product }) {
-    return (
-        <ShimmerImage 
-            src={product.image}
-            alt={product.name}
-            aspectRatio="1/1"
-            className="product-image"
-            onLoad={() => console.log('Loaded!')}
-        />
-    );
+  return (
+    <ShimmerImage
+      src={product.image}
+      alt={product.name}
+      aspectRatio="1/1"
+      className="product-image"
+      onLoad={() => console.log("Loaded!")}
+    />
+  );
 }
 ```
 
@@ -143,16 +149,16 @@ function ProductCard({ product }) {
 
 ## 📐 Props / Attributes
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `src` | `string` | **required** | Image source URL |
-| `alt` | `string` | `''` | Image alt text |
-| `class` | `string` | `''` | Additional CSS classes |
-| `width` | `string\|number` | `null` | Container width (e.g., `400`, `'50%'`) |
-| `height` | `string\|number` | `null` | Container height |
-| `aspect-ratio` | `string` | `null` | CSS aspect ratio (e.g., `'16/9'`, `'1/1'`) |
-| `loading` | `string` | `'lazy'` | `'lazy'` or `'eager'` |
-| `decoding` | `string` | `'async'` | `'async'` or `'sync'` |
+| Prop           | Type             | Default      | Description                                |
+| -------------- | ---------------- | ------------ | ------------------------------------------ |
+| `src`          | `string`         | **required** | Image source URL                           |
+| `alt`          | `string`         | `''`         | Image alt text                             |
+| `class`        | `string`         | `''`         | Additional CSS classes                     |
+| `width`        | `string\|number` | `null`       | Container width (e.g., `400`, `'50%'`)     |
+| `height`       | `string\|number` | `null`       | Container height                           |
+| `aspect-ratio` | `string`         | `null`       | CSS aspect ratio (e.g., `'16/9'`, `'1/1'`) |
+| `loading`      | `string`         | `'lazy'`     | `'lazy'` or `'eager'`                      |
+| `decoding`     | `string`         | `'async'`    | `'async'` or `'sync'`                      |
 
 > 💡 **Tip:** If no `width`, `height`, or `aspect-ratio` is provided, the container will size automatically based on the image dimensions.
 
@@ -161,30 +167,48 @@ function ProductCard({ product }) {
 ## 🎨 Utility Classes
 
 ### Border Radius
+
 ```html
-<div class="shimmer-container shimmer-rounded">     <!-- Circle -->
-<div class="shimmer-container shimmer-rounded-sm">  <!-- 4px -->
-<div class="shimmer-container shimmer-rounded-lg">  <!-- 16px -->
-<div class="shimmer-container shimmer-rounded-xl">  <!-- 24px -->
-<div class="shimmer-container shimmer-rounded-none"> <!-- 0 -->
+<div class="shimmer-container shimmer-rounded">
+  <!-- Circle -->
+  <div class="shimmer-container shimmer-rounded-sm">
+    <!-- 4px -->
+    <div class="shimmer-container shimmer-rounded-lg">
+      <!-- 16px -->
+      <div class="shimmer-container shimmer-rounded-xl">
+        <!-- 24px -->
+        <div class="shimmer-container shimmer-rounded-none"><!-- 0 --></div>
+      </div>
+    </div>
+  </div>
+</div>
 ```
 
 ### Animation Speed
+
 ```html
-<div class="shimmer-container shimmer-fast"> <!-- 0.8s -->
-<div class="shimmer-container shimmer-slow"> <!-- 2.5s -->
+<div class="shimmer-container shimmer-fast">
+  <!-- 0.8s -->
+  <div class="shimmer-container shimmer-slow"><!-- 2.5s --></div>
+</div>
 ```
 
 ### Object Fit
+
 ```html
-<div class="shimmer-container shimmer-cover">   <!-- object-fit: cover -->
-<div class="shimmer-container shimmer-contain"> <!-- object-fit: contain -->
-<div class="shimmer-container shimmer-fill">    <!-- object-fit: fill -->
+<div class="shimmer-container shimmer-cover">
+  <!-- object-fit: cover -->
+  <div class="shimmer-container shimmer-contain">
+    <!-- object-fit: contain -->
+    <div class="shimmer-container shimmer-fill"><!-- object-fit: fill --></div>
+  </div>
+</div>
 ```
 
 ### Dark Mode
+
 ```html
-<div class="shimmer-container shimmer-dark"> <!-- Force dark theme -->
+<div class="shimmer-container shimmer-dark"><!-- Force dark theme --></div>
 ```
 
 ---
@@ -227,11 +251,11 @@ SHIMMER_FADE_DURATION=0.3s
 
 ```css
 :root {
-    --shimmer-base: #e0e0e0;      /* Background */
-    --shimmer-color: #f0f0f0;     /* Highlight */
-    --shimmer-duration: 1.5s;     /* Animation speed */
-    --shimmer-radius: 8px;        /* Border radius */
-    --shimmer-fade: 0.3s;         /* Fade duration */
+  --shimmer-base: #e0e0e0; /* Background */
+  --shimmer-color: #f0f0f0; /* Highlight */
+  --shimmer-duration: 1.5s; /* Animation speed */
+  --shimmer-radius: 8px; /* Border radius */
+  --shimmer-fade: 0.3s; /* Fade duration */
 }
 ```
 
@@ -240,14 +264,14 @@ SHIMMER_FADE_DURATION=0.3s
 ```css
 /* Green theme */
 .shimmer-green {
-    --shimmer-base: #e8f5e9;
-    --shimmer-color: #c8e6c9;
+  --shimmer-base: #e8f5e9;
+  --shimmer-color: #c8e6c9;
 }
 
 /* Purple theme */
 .shimmer-purple {
-    --shimmer-base: #f3e5f5;
-    --shimmer-color: #e1bee7;
+  --shimmer-base: #f3e5f5;
+  --shimmer-color: #e1bee7;
 }
 ```
 
@@ -255,7 +279,7 @@ SHIMMER_FADE_DURATION=0.3s
 
 ```blade
 {{-- Inline style override --}}
-<x-shimmer::image-shimmer 
+<x-shimmer::image-shimmer
     src="photo.jpg"
     style="--shimmer-base: #fce4ec; --shimmer-color: #f8bbd9;"
 />
@@ -266,16 +290,16 @@ SHIMMER_FADE_DURATION=0.3s
 ```css
 /* Automatic */
 @media (prefers-color-scheme: dark) {
-    :root {
-        --shimmer-base: #2a2a2a;
-        --shimmer-color: #3a3a3a;
-    }
+  :root {
+    --shimmer-base: #2a2a2a;
+    --shimmer-color: #3a3a3a;
+  }
 }
 
 /* Manual with class */
 .dark .shimmer-container {
-    --shimmer-base: #2a2a2a;
-    --shimmer-color: #3a3a3a;
+  --shimmer-base: #2a2a2a;
+  --shimmer-color: #3a3a3a;
 }
 ```
 
@@ -292,7 +316,7 @@ Initialize shimmer on elements. Called automatically on page load.
 FikfikkShimmer.init();
 
 // Initialize within container
-FikfikkShimmer.init('#gallery');
+FikfikkShimmer.init("#gallery");
 ```
 
 ### `FikfikkShimmer.create(options)`
@@ -301,17 +325,17 @@ Create shimmer element programmatically.
 
 ```javascript
 const element = FikfikkShimmer.create({
-    container: '#target',      // Required: selector or element
-    src: 'image.jpg',          // Required: image URL
-    alt: 'Description',        // Optional
-    class: 'my-class',         // Optional
-    width: 400,                // Optional
-    height: 300,               // Optional
-    aspectRatio: '16/9',       // Optional (ignored if height set)
-    loading: 'lazy',           // Optional: 'lazy' | 'eager'
-    decoding: 'async',         // Optional: 'async' | 'sync'
-    onLoad: (img) => {},       // Optional: callback
-    onError: (img) => {}       // Optional: callback
+  container: "#target", // Required: selector or element
+  src: "image.jpg", // Required: image URL
+  alt: "Description", // Optional
+  class: "my-class", // Optional
+  width: 400, // Optional
+  height: 300, // Optional
+  aspectRatio: "16/9", // Optional (ignored if height set)
+  loading: "lazy", // Optional: 'lazy' | 'eager'
+  decoding: "async", // Optional: 'async' | 'sync'
+  onLoad: (img) => {}, // Optional: callback
+  onError: (img) => {}, // Optional: callback
 });
 ```
 
@@ -321,13 +345,13 @@ Reinitialize after dynamic content changes.
 
 ```javascript
 // After AJAX/fetch
-fetch('/api/images').then(() => {
-    // ... add images to DOM
-    FikfikkShimmer.refresh();
+fetch("/api/images").then(() => {
+  // ... add images to DOM
+  FikfikkShimmer.refresh();
 });
 
 // After Vue/React update
-FikfikkShimmer.refresh('#gallery');
+FikfikkShimmer.refresh("#gallery");
 ```
 
 ### `FikfikkShimmer.destroy([selector])`
@@ -335,7 +359,7 @@ FikfikkShimmer.refresh('#gallery');
 Remove shimmer and restore plain images.
 
 ```javascript
-FikfikkShimmer.destroy('#gallery');
+FikfikkShimmer.destroy("#gallery");
 ```
 
 ---
@@ -346,17 +370,17 @@ FikfikkShimmer.destroy('#gallery');
 
 ```html
 <div x-data="{ loaded: false }">
-    <div class="shimmer-container" style="aspect-ratio: 16/9;">
-        <div class="shimmer-placeholder" :class="{ loaded }">
-            <div class="shimmer-animation"></div>
-        </div>
-        <img 
-            src="photo.jpg" 
-            class="shimmer-image" 
-            :class="{ loaded }"
-            @load="loaded = true"
-        >
+  <div class="shimmer-container" style="aspect-ratio: 16/9;">
+    <div class="shimmer-placeholder" :class="{ loaded }">
+      <div class="shimmer-animation"></div>
     </div>
+    <img
+      src="photo.jpg"
+      class="shimmer-image"
+      :class="{ loaded }"
+      @load="loaded = true"
+    />
+  </div>
 </div>
 ```
 
@@ -364,8 +388,8 @@ FikfikkShimmer.destroy('#gallery');
 
 ```blade
 {{-- Works out of the box --}}
-<x-shimmer::image-shimmer 
-    src="{{ $image }}" 
+<x-shimmer::image-shimmer
+    src="{{ $image }}"
     wire:key="image-{{ $id }}"
 />
 
@@ -383,7 +407,7 @@ FikfikkShimmer.destroy('#gallery');
 
 ```javascript
 // In your Vue/React component
-import { onMounted, onUpdated } from 'vue';
+import { onMounted, onUpdated } from "vue";
 
 onMounted(() => FikfikkShimmer?.init());
 onUpdated(() => FikfikkShimmer?.refresh());
@@ -398,7 +422,7 @@ onUpdated(() => FikfikkShimmer?.refresh());
 ```blade
 <div class="grid grid-cols-4 gap-4">
     @foreach($products as $product)
-        <x-shimmer::image-shimmer 
+        <x-shimmer::image-shimmer
             src="{{ $product->image }}"
             alt="{{ $product->name }}"
             aspect-ratio="1/1"
@@ -411,7 +435,7 @@ onUpdated(() => FikfikkShimmer?.refresh());
 ### User Avatar
 
 ```blade
-<x-shimmer::image-shimmer 
+<x-shimmer::image-shimmer
     src="{{ $user->avatar }}"
     alt="{{ $user->name }}"
     width="48"
@@ -423,7 +447,7 @@ onUpdated(() => FikfikkShimmer?.refresh());
 ### Hero Banner
 
 ```blade
-<x-shimmer::image-shimmer 
+<x-shimmer::image-shimmer
     src="{{ $banner->image }}"
     alt="{{ $banner->title }}"
     aspect-ratio="21/9"
@@ -437,7 +461,7 @@ onUpdated(() => FikfikkShimmer?.refresh());
 ```blade
 @foreach($gallery as $image)
     <a href="{{ $image->full }}" data-lightbox="gallery">
-        <x-shimmer::image-shimmer 
+        <x-shimmer::image-shimmer
             src="{{ $image->thumbnail }}"
             alt="{{ $image->caption }}"
             aspect-ratio="4/3"
@@ -465,7 +489,7 @@ Yes! Use the CDN or copy the CSS/JS files. The shimmer works with any HTML page.
 Use inline CSS variables:
 
 ```blade
-<x-shimmer::image-shimmer 
+<x-shimmer::image-shimmer
     src="photo.jpg"
     style="--shimmer-base: #fce4ec; --shimmer-color: #f8bbd9;"
 />
@@ -477,14 +501,14 @@ Yes!
 
 ```html
 <div class="shimmer-container" data-shimmer>
-    <div class="shimmer-placeholder"><div class="shimmer-animation"></div></div>
-    <img 
-        src="small.jpg"
-        srcset="small.jpg 400w, medium.jpg 800w, large.jpg 1200w"
-        sizes="(max-width: 600px) 400px, 800px"
-        class="shimmer-image"
-        data-shimmer-image
-    >
+  <div class="shimmer-placeholder"><div class="shimmer-animation"></div></div>
+  <img
+    src="small.jpg"
+    srcset="small.jpg 400w, medium.jpg 800w, large.jpg 1200w"
+    sizes="(max-width: 600px) 400px, 800px"
+    class="shimmer-image"
+    data-shimmer-image
+  />
 </div>
 ```
 
@@ -494,7 +518,7 @@ For users who prefer reduced motion, it's automatic. To disable manually:
 
 ```css
 .shimmer-animation {
-    animation: none !important;
+  animation: none !important;
 }
 ```
 

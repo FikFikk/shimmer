@@ -154,7 +154,7 @@ if (!function_exists('shimmer_cdn')) {
     function shimmer_cdn(string $version = 'latest'): array
     {
         $base = "https://cdn.jsdelivr.net/npm/fikfikk-shimmer@{$version}/dist";
-        
+
         return [
             'css' => "{$base}/shimmer.min.css",
             'js' => "{$base}/shimmer.min.js",
