@@ -1,106 +1,160 @@
-<div class="shimmer-image-container {{ $class }}"
-    style="
-        @if ($width) width: {{ is_numeric($width) ? $width . 'px' : $width }}; @endif
-        @if ($height) height: {{ is_numeric($height) ? $height . 'px' : $height }}; @endif
-        @if (!$height && $aspectRatio) aspect-ratio: {{ $aspectRatio }}; @endif
-     "
-    data-shimmer-container>
+@php
+    // Build inline styles dynamically
+    $styles = [];
+    
+    if ($width) {
+        $styles[] = 'width: ' . (is_numeric($width) ? $width . 'px' : $width);
+    }
+    
+    if ($height) {
+        $styles[] = 'height: ' . (is_numeric($height) ? $height . 'px' : $height);
+    }
+    
+    // Only apply aspect-ratio if no explicit height AND aspectRatio is provided
+    if (!$height && $aspectRatio) {
+        $styles[] = 'aspect-ratio: ' . $aspectRatio;
+    }
+    
+    $inlineStyle = implode('; ', $styles);
+@endphp
 
+<div 
+    class="shimmer-container{{ $class ? ' ' . $class : '' }}"
+    @if($inlineStyle) style="{{ $inlineStyle }}" @endif
+    data-shimmer>
+    
     {{-- Shimmer Placeholder --}}
-    <div class="shimmer-placeholder" data-shimmer-placeholder>
+    <div class="shimmer-placeholder">
         <div class="shimmer-animation"></div>
     </div>
 
     {{-- Actual Image --}}
-    <img src="{{ $src }}" alt="{{ $alt }}" class="shimmer-image" loading="{{ $loading }}"
-        decoding="{{ $decoding }}" data-shimmer-image style="opacity: 0;">
+    <img 
+        src="{{ $src }}" 
+        alt="{{ $alt }}" 
+        class="shimmer-image" 
+        loading="{{ $loading }}"
+        decoding="{{ $decoding }}" 
+        data-shimmer-image
+    >
 </div>
 
 @once
-    @push('styles')
-        <style>
-            .shimmer-image-container {
-                position: relative;
-                overflow: hidden;
-                background-color: {{ config('shimmer.base_color', '#e0e0e0') }};
-                border-radius: {{ config('shimmer.border_radius', '8px') }};
-                width: 100%;
+@push('styles')
+<style>
+:root {
+    --shimmer-base: {{ config('shimmer.base_color', '#e0e0e0') }};
+    --shimmer-color: {{ config('shimmer.shimmer_color', '#f0f0f0') }};
+    --shimmer-duration: {{ config('shimmer.animation_duration', '1.5s') }};
+    --shimmer-radius: {{ config('shimmer.border_radius', '8px') }};
+    --shimmer-fade: {{ config('shimmer.fade_duration', '0.3s') }};
+}
+
+.shimmer-container {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--shimmer-base);
+    border-radius: var(--shimmer-radius);
+    display: block;
+}
+
+.shimmer-placeholder {
+    position: absolute;
+    inset: 0;
+    background-color: var(--shimmer-base);
+    overflow: hidden;
+    z-index: 1;
+    transition: opacity var(--shimmer-fade) ease;
+}
+
+.shimmer-placeholder.loaded {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.shimmer-animation {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--shimmer-color) 50%,
+        transparent 100%
+    );
+    animation: shimmer-slide var(--shimmer-duration) infinite;
+}
+
+.shimmer-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity var(--shimmer-fade) ease;
+}
+
+.shimmer-image.loaded {
+    opacity: 1;
+}
+
+@keyframes shimmer-slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Utility variants */
+.shimmer-container.shimmer-cover .shimmer-image { object-fit: cover; }
+.shimmer-container.shimmer-contain .shimmer-image { object-fit: contain; }
+.shimmer-container.shimmer-fill .shimmer-image { object-fit: fill; }
+
+/* Border radius variants */
+.shimmer-container.shimmer-rounded { --shimmer-radius: 50%; }
+.shimmer-container.shimmer-rounded-lg { --shimmer-radius: 16px; }
+.shimmer-container.shimmer-rounded-none { --shimmer-radius: 0; }
+
+/* Speed variants */
+.shimmer-container.shimmer-fast { --shimmer-duration: 0.8s; }
+.shimmer-container.shimmer-slow { --shimmer-duration: 2.5s; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+(function() {
+    function initShimmer() {
+        document.querySelectorAll('[data-shimmer-image]:not(.shimmer-initialized)').forEach(function(img) {
+            img.classList.add('shimmer-initialized');
+            var container = img.closest('[data-shimmer]');
+            var placeholder = container ? container.querySelector('.shimmer-placeholder') : null;
+
+            function onLoad() {
+                img.classList.add('loaded');
+                if (placeholder) placeholder.classList.add('loaded');
             }
 
-            .shimmer-placeholder {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: {{ config('shimmer.base_color', '#e0e0e0') }};
-                overflow: hidden;
+            function onError() {
+                if (placeholder) placeholder.classList.add('loaded');
             }
 
-            .shimmer-animation {
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg,
-                        transparent 0%,
-                        {{ config('shimmer.shimmer_color', '#f0f0f0') }} 50%,
-                        transparent 100%);
-                animation: shimmer {{ config('shimmer.animation_duration', '1.5s') }} infinite;
+            if (img.complete && img.naturalHeight !== 0) {
+                onLoad();
+            } else {
+                img.addEventListener('load', onLoad);
+                img.addEventListener('error', onError);
             }
+        });
+    }
 
-            .shimmer-image {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
-                transition: opacity {{ config('shimmer.fade_duration', '0.3s') }} ease-in-out;
-            }
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initShimmer);
+    } else {
+        initShimmer();
+    }
 
-            .shimmer-image.loaded {
-                opacity: 1 !important;
-            }
-
-            .shimmer-placeholder.hidden {
-                display: none;
-            }
-
-            @keyframes shimmer {
-                0% {
-                    transform: translateX(-100%);
-                }
-
-                100% {
-                    transform: translateX(100%);
-                }
-            }
-        </style>
-    @endpush
-
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const images = document.querySelectorAll('[data-shimmer-image]');
-
-                images.forEach(function(img) {
-                    const container = img.closest('[data-shimmer-container]');
-                    const placeholder = container.querySelector('[data-shimmer-placeholder]');
-
-                    function imageLoaded() {
-                        img.classList.add('loaded');
-                        if (placeholder) {
-                            placeholder.classList.add('hidden');
-                        }
-                    }
-
-                    if (img.complete) {
-                        imageLoaded();
-                    } else {
-                        img.addEventListener('load', imageLoaded);
-                        img.addEventListener('error', function() {
-                            placeholder.classList.add('hidden');
-                        });
-                    }
-                });
-            });
-        </script>
-    @endpush
+    // Expose refresh function globally
+    window.ShimmerRefresh = initShimmer;
+})();
+</script>
+@endpush
 @endonce

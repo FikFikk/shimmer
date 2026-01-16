@@ -1,134 +1,204 @@
 /**
- * Fikfikk Shimmer - Laravel Image Shimmer Package
- * @version 1.0.0
+ * Fikfikk Shimmer - Universal Image Shimmer Loading Effect
+ * @version 1.1.0
  * @author FikFikk
  * @license MIT
+ * 
+ * Works with: Laravel Blade, Vue, React, Alpine.js, vanilla HTML/JS
  */
 
-const FikfikkShimmer = {
-    /**
-     * Initialize shimmer effect on all shimmer images
-     */
-    init: function () {
-        document.querySelectorAll('[data-shimmer-image], .shimmer-image').forEach(img => {
-            const container = img.closest('[data-shimmer-container], [data-shimmer], .shimmer-container, .shimmer-image-container');
-            const placeholder = container?.querySelector('[data-shimmer-placeholder], .shimmer-placeholder');
+(function(root, factory) {
+    // UMD pattern for universal module compatibility
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else {
+        root.FikfikkShimmer = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function() {
+    'use strict';
 
-            function imageLoaded() {
-                img.classList.add('loaded');
-                img.style.opacity = '1';
-                if (placeholder) {
-                    placeholder.classList.add('hidden');
+    var FikfikkShimmer = {
+        version: '1.1.0',
+        
+        /**
+         * Default configuration
+         */
+        defaults: {
+            aspectRatio: null,
+            loading: 'lazy',
+            decoding: 'async',
+            objectFit: 'cover'
+        },
+
+        /**
+         * Initialize shimmer effect on all images
+         * @param {string|Element} [selector] - Optional selector or container
+         */
+        init: function(selector) {
+            var container = selector 
+                ? (typeof selector === 'string' ? document.querySelector(selector) : selector)
+                : document;
+            
+            if (!container) return;
+
+            var images = container.querySelectorAll('[data-shimmer-image]:not(.shimmer-initialized)');
+            
+            images.forEach(function(img) {
+                img.classList.add('shimmer-initialized');
+                
+                var shimmerContainer = img.closest('[data-shimmer], .shimmer-container');
+                var placeholder = shimmerContainer 
+                    ? shimmerContainer.querySelector('.shimmer-placeholder') 
+                    : null;
+
+                function onImageLoad() {
+                    img.classList.add('loaded');
+                    if (placeholder) {
+                        placeholder.classList.add('loaded');
+                    }
                 }
+
+                function onImageError() {
+                    // Hide shimmer on error
+                    if (placeholder) {
+                        placeholder.classList.add('loaded');
+                    }
+                }
+
+                // Check if already loaded (cached)
+                if (img.complete && img.naturalHeight !== 0) {
+                    onImageLoad();
+                } else {
+                    img.addEventListener('load', onImageLoad);
+                    img.addEventListener('error', onImageError);
+                }
+            });
+        },
+
+        /**
+         * Create shimmer element programmatically
+         * @param {Object} options - Configuration options
+         * @returns {HTMLElement|null}
+         */
+        create: function(options) {
+            if (!options || !options.src) {
+                console.warn('FikfikkShimmer: src is required');
+                return null;
             }
 
-            // Check if image is already loaded (from cache)
-            if (img.complete && img.naturalHeight !== 0) {
-                imageLoaded();
-            } else {
-                img.addEventListener('load', imageLoaded);
-                img.addEventListener('error', () => {
-                    if (placeholder) {
-                        placeholder.classList.add('hidden');
-                    }
+            var container = options.container
+                ? (typeof options.container === 'string' 
+                    ? document.querySelector(options.container) 
+                    : options.container)
+                : null;
+
+            // Build styles
+            var styles = [];
+            if (options.width) {
+                styles.push('width:' + (typeof options.width === 'number' ? options.width + 'px' : options.width));
+            }
+            if (options.height) {
+                styles.push('height:' + (typeof options.height === 'number' ? options.height + 'px' : options.height));
+            }
+            if (!options.height && options.aspectRatio) {
+                styles.push('aspect-ratio:' + options.aspectRatio);
+            }
+
+            var className = 'shimmer-container' + (options.class ? ' ' + options.class : '');
+            var styleAttr = styles.length ? ' style="' + styles.join(';') + '"' : '';
+
+            var html = 
+                '<div class="' + className + '" data-shimmer' + styleAttr + '>' +
+                    '<div class="shimmer-placeholder">' +
+                        '<div class="shimmer-animation"></div>' +
+                    '</div>' +
+                    '<img ' +
+                        'src="' + options.src + '" ' +
+                        'alt="' + (options.alt || '') + '" ' +
+                        'class="shimmer-image" ' +
+                        'loading="' + (options.loading || this.defaults.loading) + '" ' +
+                        'decoding="' + (options.decoding || this.defaults.decoding) + '" ' +
+                        'data-shimmer-image' +
+                    '>' +
+                '</div>';
+
+            if (container) {
+                container.innerHTML = html;
+                this.init(container);
+                
+                var element = container.querySelector('[data-shimmer]');
+                
+                // Callbacks
+                var img = element.querySelector('[data-shimmer-image]');
+                if (options.onLoad) {
+                    img.addEventListener('load', function() { options.onLoad(img); });
+                }
+                if (options.onError) {
+                    img.addEventListener('error', function() { options.onError(img); });
+                }
+                
+                return element;
+            }
+
+            // Return HTML string if no container
+            return html;
+        },
+
+        /**
+         * Refresh/reinitialize (alias for init)
+         * @param {string|Element} [selector]
+         */
+        refresh: function(selector) {
+            // Remove initialized class to allow re-init
+            var container = selector 
+                ? (typeof selector === 'string' ? document.querySelector(selector) : selector)
+                : document;
+            
+            if (container) {
+                container.querySelectorAll('.shimmer-initialized').forEach(function(el) {
+                    el.classList.remove('shimmer-initialized');
                 });
             }
-        });
-    },
+            
+            this.init(selector);
+        },
 
-    /**
-     * Create a new shimmer image programmatically
-     * @param {Object} options - Configuration options
-     * @param {string|HTMLElement} options.container - Container selector or element
-     * @param {string} options.src - Image source URL
-     * @param {string} [options.alt=''] - Image alt text
-     * @param {string} [options.class=''] - Additional CSS classes
-     * @param {string|number} [options.width] - Container width
-     * @param {string|number} [options.height] - Container height
-     * @param {string} [options.aspectRatio='16/9'] - Aspect ratio
-     * @param {string} [options.loading='lazy'] - Loading attribute
-     * @param {string} [options.decoding='async'] - Decoding attribute
-     * @param {Function} [options.onLoad] - Callback when image loads
-     * @param {Function} [options.onError] - Callback on error
-     * @returns {HTMLElement|null} The created shimmer container
-     */
-    create: function (options) {
-        const container = typeof options.container === 'string'
-            ? document.querySelector(options.container)
-            : options.container;
+        /**
+         * Destroy shimmer from elements
+         * @param {string|Element} [selector]
+         */
+        destroy: function(selector) {
+            var container = selector 
+                ? (typeof selector === 'string' ? document.querySelector(selector) : selector)
+                : document;
+            
+            if (!container) return;
 
-        if (!container) {
-            console.warn('FikfikkShimmer: Container not found');
-            return null;
+            container.querySelectorAll('[data-shimmer]').forEach(function(el) {
+                var img = el.querySelector('img');
+                if (img) {
+                    // Replace shimmer container with just the image
+                    img.classList.remove('shimmer-image', 'shimmer-initialized', 'loaded');
+                    img.removeAttribute('data-shimmer-image');
+                    img.style.opacity = '';
+                    el.parentNode.replaceChild(img, el);
+                }
+            });
         }
+    };
 
-        const width = options.width
-            ? `width: ${typeof options.width === 'number' ? options.width + 'px' : options.width};`
-            : '';
-        const height = options.height
-            ? `height: ${typeof options.height === 'number' ? options.height + 'px' : options.height};`
-            : '';
-        const aspectRatio = !options.height && options.aspectRatio
-            ? `aspect-ratio: ${options.aspectRatio};`
-            : '';
-
-        const html = `
-            <div class="shimmer-container" data-shimmer-container style="${width}${height}${aspectRatio}">
-                <div class="shimmer-placeholder" data-shimmer-placeholder>
-                    <div class="shimmer-animation"></div>
-                </div>
-                <img src="${options.src}" 
-                     alt="${options.alt || ''}" 
-                     class="shimmer-image ${options.class || ''}" 
-                     loading="${options.loading || 'lazy'}"
-                     decoding="${options.decoding || 'async'}"
-                     data-shimmer-image
-                     style="opacity: 0;">
-            </div>
-        `;
-
-        container.innerHTML = html;
-
-        const imgElement = container.querySelector('[data-shimmer-image]');
-
-        if (options.onLoad) {
-            imgElement.addEventListener('load', () => options.onLoad(imgElement));
+    // Auto-initialize on DOM ready
+    if (typeof document !== 'undefined') {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                FikfikkShimmer.init();
+            });
+        } else {
+            FikfikkShimmer.init();
         }
+    }
 
-        if (options.onError) {
-            imgElement.addEventListener('error', () => options.onError(imgElement));
-        }
-
-        this.init();
-
-        return container.firstElementChild;
-    },
-
-    /**
-     * Refresh/re-initialize shimmer on dynamically added images
-     */
-    refresh: function () {
-        this.init();
-    },
-
-    /**
-     * Package version
-     */
-    version: '1.0.0'
-};
-
-// Export for different module systems
-if (typeof window !== 'undefined') {
-    window.FikfikkShimmer = FikfikkShimmer;
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = FikfikkShimmer;
-}
-
-// Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => FikfikkShimmer.init());
-} else {
-    FikfikkShimmer.init();
-}
+    return FikfikkShimmer;
+}));

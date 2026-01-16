@@ -12,16 +12,28 @@ class ImageShimmer extends Component
     public string $class;
     public ?string $width;
     public ?string $height;
-    public string $aspectRatio;
+    public ?string $aspectRatio;
     public string $loading;
     public string $decoding;
 
+    /**
+     * Create a new component instance.
+     *
+     * @param string $src Image source URL (required)
+     * @param string $alt Image alt text
+     * @param string $class Additional CSS classes
+     * @param string|int|null $width Container width (optional - auto if not set)
+     * @param string|int|null $height Container height (optional - auto if not set)
+     * @param string|null $aspectRatio Aspect ratio when no width/height (optional)
+     * @param string $loading Loading strategy: 'lazy' or 'eager'
+     * @param string $decoding Decoding strategy: 'async' or 'sync'
+     */
     public function __construct(
         string $src,
         string $alt = '',
         string $class = '',
-        ?string $width = null,
-        ?string $height = null,
+        string|int|null $width = null,
+        string|int|null $height = null,
         ?string $aspectRatio = null,
         string $loading = 'lazy',
         string $decoding = 'async'
@@ -29,9 +41,9 @@ class ImageShimmer extends Component
         $this->src = $src;
         $this->alt = $alt;
         $this->class = $class;
-        $this->width = $width;
-        $this->height = $height;
-        $this->aspectRatio = $aspectRatio ?? config('shimmer.default_aspect_ratio', '16/9');
+        $this->width = $width !== null ? (string) $width : null;
+        $this->height = $height !== null ? (string) $height : null;
+        $this->aspectRatio = $aspectRatio;
         $this->loading = $loading;
         $this->decoding = $decoding;
     }
@@ -42,22 +54,5 @@ class ImageShimmer extends Component
     public function render(): View
     {
         return view('shimmer::components.image-shimmer');
-    }
-
-    /**
-     * Get data for the view.
-     */
-    public function data(): array
-    {
-        return [
-            'src' => $this->src,
-            'alt' => $this->alt,
-            'class' => $this->class,
-            'width' => $this->width,
-            'height' => $this->height,
-            'aspectRatio' => $this->aspectRatio,
-            'loading' => $this->loading,
-            'decoding' => $this->decoding,
-        ];
     }
 }
