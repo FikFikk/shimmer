@@ -1,12 +1,19 @@
 @php
-    // Build inline styles dynamically - with null coalescing for safety
-    $width = $width ?? null;
-    $height = $height ?? null;
-    $aspectRatio = $aspectRatio ?? null;
-    $class = $class ?? '';
-    $alt = $alt ?? '';
-    $loading = $loading ?? 'lazy';
-    $decoding = $decoding ?? 'async';
+    // Safely derive variables: prefer explicit props, fallback to attributes bag, else null/defaults
+    $width = isset($width) ? $width : (isset($attributes) ? $attributes->get('width') : null);
+    $height = isset($height) ? $height : (isset($attributes) ? $attributes->get('height') : null);
+
+    // aspect-ratio may be passed as 'aspect-ratio' or 'aspectRatio'
+    $aspectRatio = isset($aspectRatio)
+        ? $aspectRatio
+        : (isset($attributes)
+            ? $attributes->get('aspect-ratio') ?? $attributes->get('aspectRatio')
+            : null);
+
+    $class = isset($class) ? $class : (isset($attributes) ? $attributes->get('class') : '');
+    $alt = isset($alt) ? $alt : '';
+    $loading = isset($loading) ? $loading : 'lazy';
+    $decoding = isset($decoding) ? $decoding : 'async';
 
     $styles = [];
 
