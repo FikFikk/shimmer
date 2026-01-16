@@ -1,5 +1,13 @@
 @php
-    // Build inline styles dynamically
+    // Build inline styles dynamically - with null coalescing for safety
+    $width = $width ?? null;
+    $height = $height ?? null;
+    $aspectRatio = $aspectRatio ?? null;
+    $class = $class ?? '';
+    $alt = $alt ?? '';
+    $loading = $loading ?? 'lazy';
+    $decoding = $decoding ?? 'async';
+    
     $styles = [];
     
     if ($width) {
